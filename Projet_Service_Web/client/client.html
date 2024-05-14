@@ -1,0 +1,71 @@
+<html>
+<head>
+    <script>
+        
+        window.addEventListener("DOMContentLoaded",init);
+
+        async function init(){
+
+            console.log("On crée les workers");
+
+            await Promise.all([
+                createWorker("Joe","JoeScript"),
+                createWorker("Jack","JackScript"),
+                createWorker("William","WilliamScript"),
+                createWorker("Aurell","AurellScript")
+            ]);
+
+            console.log("On lance les workers");
+
+            await Promise.all([
+                lancerWorker("Joe"),
+                lancerWorker("Jack"),
+                lancerWorker("William"),
+                lancerWorker("Aurell")
+                ]);
+
+        }
+
+        async function lancerWorker(workerName){
+            console.log(workerName);
+            console.log(`http://localhost:3000/api/v1/workers/${workerName}`);
+            const response = await fetch(
+                `http://localhost:3000/api/v1/workers/${workerName}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({status:"activated"})
+                }
+            );
+            const myWorker = await response.json();
+            console.log(myWorker);
+        }
+
+        async function createWorker(workerName, scriptName){
+            const reponse = await fetch(
+                "http://localhost:3000/api/v1/workers",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({workerName,scriptName})
+                }
+            );
+            const myWorker = await reponse.json();
+            console.log(myWorker);
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+</body>
+
+
+
+</html>

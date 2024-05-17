@@ -3,6 +3,25 @@ const { Client,  Events, GatewayIntentBits } = require('discord.js');
 const { token1, salon_id } = require('../../config.json');
 const RiveScript = require('rivescript')
 
+// Permet de communiquer avec le thread parent (le thread principal)
+const {parentPort, workerData} = require('worker_threads');
+
+parentPort.on('message', (message) => {
+  console.log(`Worker ${workerData.workerName} received message from parent thread: ${message}`);
+  if(message == 'suspend'){
+    client.user.setPresence({
+      status: 'idle',
+
+    });
+  } if(message == 'continue'){
+    client.user.setPresence({
+      status: 'online',
+
+    });
+  }
+});
+
+
 var bot = new RiveScript();
 
 // Load a directory full of RiveScript documents (.rive files). This is for

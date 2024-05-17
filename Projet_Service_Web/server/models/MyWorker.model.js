@@ -3,6 +3,8 @@ const { Worker, workerData } = require('worker_threads')
 
 const workerScripts = [];
 workerScripts['index_discordChatBot1'] = './models/workerScripts/index_discordChatBot1.js';
+workerScripts['index_discordChatBot2'] = './models/workerScripts/index_discordChatBot2.js';
+workerScripts['index_discordChatBot3'] = './models/workerScripts/index_discordChatBot3.js';
 
 const statusSet = new Set(['installed','activated','idle','terminated']);
 

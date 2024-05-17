@@ -1,9 +1,28 @@
 // Require the necessary discord.js classes
 const { Client,  Events, GatewayIntentBits } = require('discord.js');
-const { token2, salon_id } = require('../../config.json');
+const { salon_id } = require('../../config.json');
+//const { workerData } = require('worker_threads');
 const RiveScript = require('rivescript')
 
 var bot = new RiveScript();
+
+// Permet de communiquer avec le thread parent (le thread principal)
+const {parentPort, workerData} = require('worker_threads');
+
+parentPort.on('message', (message) => {
+  console.log(`Worker ${workerData.workerName} received message from parent thread: ${message}`);
+  if(message == 'suspend'){
+    client.user.setPresence({
+      status: 'idle',
+
+    });
+  } if(message == 'continue'){
+    client.user.setPresence({
+      status: 'online',
+
+    });
+  }
+});
 
 // Load a directory full of RiveScript documents (.rive files). This is for
 // Node.JS only: it doesn't work on the web!
@@ -81,4 +100,4 @@ console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
 // Log in to Discord with your client's token
-client.login(token2);
+client.login(workerData.token);

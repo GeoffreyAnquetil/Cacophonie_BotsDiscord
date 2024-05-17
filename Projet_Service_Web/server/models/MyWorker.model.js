@@ -2,18 +2,17 @@
 const { Worker, workerData } = require('worker_threads')
 
 const workerScripts = [];
-workerScripts['scriptBot1'] = './models/workerScripts/index_discordChatBot1.js';
-workerScripts['scriptBot2'] = './models/workerScripts/index_discordChatBot2.js';
-workerScripts['scriptBot3'] = './models/workerScripts/index_discordChatBot3.js';
+workerScripts['index_discordChatBot'] = './models/workerScripts/index_discordChatBot.js';
 
 const statusSet = new Set(['installed','activated','idle','terminated']);
 
 const fs = require('fs');
 
 class MyWorker{
-    constructor({workerName,scriptName,workersService}){
+    constructor({workerName,token,workersService}){
         this.workerName = workerName;
-        this.scriptFile = workerScripts[scriptName];
+        this.token = token;
+        this.scriptFile = workerScripts['index_discordChatBot'];
         this.workersService = workersService
         this.job;
         this.status = 'installed';
@@ -21,35 +20,34 @@ class MyWorker{
         this.logFile = "./logs/" + workerName + ".log";
     }
 
-    start(){
-        const worker = new Worker( this.scriptFile, {workerData: {workerName:this.workerName}} );
+    start(token){
+        const worker = new Worker(this.scriptFile, {
+            workerData: {
+                workerName: this.workerName,
+                token: token
+            }
+        });
+        console.log(workerData);
         this.job = worker;
-
-        worker.on(
-            'online', 
-            () => { 
-                this.status = 'activated';
-                console.log('Launching intensive CPU task') 
-            }
-        ); 
-        worker.on(
-            'message', 
-            messageFromWorker => {
-                console.log(`message from worker  ${this.workerName}: ${messageFromWorker}`)
-            }
-        );
-        worker.on(
-            'error', 
-            (code)=>{ throw Error(`Worker ${this.workerName} issued an error with code ${code}`)}
-        );
-        worker.on(
-            'exit', 
-            code => {
-                this.status = 'terminated';
-            }
-        );
-          
+    
+        worker.on('online', () => {
+            this.status = 'activated';
+            console.log('Launching intensive CPU task');
+        });
+    
+        worker.on('message', messageFromWorker => {
+            console.log(`message from worker ${this.workerName}: ${messageFromWorker}`);
+        });
+    
+        worker.on('error', (code) => {
+            throw Error(`Worker ${this.workerName} issued an error with code ${code}`);
+        });
+    
+        worker.on('exit', code => {
+            this.status = 'terminated';
+        });
     }
+    
 
     dump(){
         return `This is worker ${this.workerName}`
@@ -79,23 +77,21 @@ class MyWorker{
         return (status == this.status);
     }
 
-    setStatus(status){
-        console.log(`setStatus to ${status}, current is ${this.status}`)
-        if('terminated'== status){
+    setStatus(status, token){
+        console.log(`setStatus to ${status}, current is ${this.status}`);
+        if(status === 'terminated'){
             this.delete();
-        }
-        if('idle' == status && this.status == 'activated' ){
+        } else if(status === 'idle' && this.status === 'activated'){
             this.suspend();
-        }
-        if('activated' == status){
-            if( this.status == 'idle' ){
+        } else if(status === 'activated'){
+            if(this.status === 'idle'){
                 this.continue();
-            }
-            if(  this.status == 'installed'){
-                this.start();
+            } else if(this.status === 'installed'){
+                this.start(token);
             }
         }
     }
+    
 
     getStatus(){
         return this.status;

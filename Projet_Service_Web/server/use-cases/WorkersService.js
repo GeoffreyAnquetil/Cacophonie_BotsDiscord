@@ -13,7 +13,7 @@ class WorkersService extends Map{
 		return this.instance;
 	}
 	
-	addWorker({workerName,scriptName}){
+	addWorker({workerName,token}){
   		let newWorker;
 
 		//rejeter si le nom est déjà utilisé.
@@ -22,7 +22,7 @@ class WorkersService extends Map{
 		}
 
   		try{
-			newWorker = new MyWorker({workerName,scriptName,workersService:this});
+			newWorker = new MyWorker({workerName,token,workersService:this});
 		} catch (error){
 			throw Error(`cannot create Worker ${error} ${error.stack}`);
 		}
@@ -66,13 +66,12 @@ class WorkersService extends Map{
 
 
 	patchWorker({workerName,payload}){
-		//renvoie L'élément associée à la clé donnée ou undefined si la clé ne fait pas partie de l'objet Map.
 		const myWorker = this.get(workerName);
 		if(undefined == myWorker){
 			throw Error(`cannot get Worker ${workerName}, undefined `);
 		}
 		if(payload.status){
-			myWorker.setStatus(payload.status);
+			myWorker.setStatus(payload.status, myWorker.token);
 		}
 		return myWorker;
 	}

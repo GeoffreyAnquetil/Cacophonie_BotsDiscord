@@ -1,4 +1,5 @@
 const MyWorker = require("../models/MyWorker.model.js");
+const { token1, token2, token3 } = require("../config.json");
 
 class WorkersService extends Map{
 	constructor(){
@@ -13,21 +14,47 @@ class WorkersService extends Map{
 		return this.instance;
 	}
 	
-	addWorker({workerName,token}){
-  		let newWorker;
-
+	addWorker({ workerName }) {
+		let newWorker;
+		let token = token1;
+	
 		//rejeter si le nom est déjà utilisé.
-		if(this.has(workerName)){
-			throw Error(`cannot create Worker ${workerName} : name already in use. ${error} ${error.stack}`);
+		if (this.has(workerName)) {
+			throw Error(`cannot create Worker ${workerName} : name already in use.`);
 		}
-
-  		try{
-			newWorker = new MyWorker({workerName,token,workersService:this});
-		} catch (error){
+	
+		// Fonction pour vérifier si un token est utilisé
+		const isTokenUsed = (tokenToCheck) => {
+			for (const [_, worker] of this) {
+				if (worker.token === tokenToCheck) {
+					return true;
+				}
+			}
+			return false;
+		};
+	
+		if (isTokenUsed(token1) && !isTokenUsed(token2)) {
+			console.log(`token1 is used`);
+			token = token2;
+		}
+	
+		if (isTokenUsed(token2) && !isTokenUsed(token3)) {
+			console.log(`token2 is used`);
+			token = token3;
+		}
+	
+		if (isTokenUsed(token1) && isTokenUsed(token2) && isTokenUsed(token3)) {
+			throw Error(`cannot create Worker ${workerName} : no more token available.`);
+		}
+	
+		try {
+			newWorker = new MyWorker({ workerName, token, workersService: this });
+		} catch (error) {
 			throw Error(`cannot create Worker ${error} ${error.stack}`);
 		}
 		return newWorker.dump();
 	}
+	
 
 	deleteWorker({workerName}){
 

@@ -83,9 +83,8 @@ router.post('/', addWorker)
 function addWorker(req, res, next){
     try {
       let instance = WorkersService.getInstance();
-      let {workerName,token} = req.body;
-      console.log(`workername : ${workerName}, token : ${token}, body : ${req.body}`);
-      const worker = instance.addWorker({workerName,token});
+      let {workerName} = req.body;
+      const worker = instance.addWorker({workerName});
       console.log(`worker added : ${worker}`);
       res.status(201).json(worker);
     } catch (error) {

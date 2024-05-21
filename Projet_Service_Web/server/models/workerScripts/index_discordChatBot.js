@@ -9,18 +9,45 @@ var bot = new RiveScript();
 // Permet de communiquer avec le thread parent (le thread principal)
 const {parentPort, workerData} = require('worker_threads');
 
+let botStatus = 'online';
+
 parentPort.on('message', (message) => {
   console.log(`Worker ${workerData.workerName} received message from parent thread: ${message}`);
+  // Gestion du statut du worker
   if(message == 'suspend'){
     client.user.setPresence({
       status: 'idle',
-
     });
   } if(message == 'continue'){
     client.user.setPresence({
       status: 'online',
-
+      activities: [{ name: 'with discord.js', type: 'PLAYING' }],
     });
+  }
+  // Gestions des différents statuts du bot
+  if(message == 'dnd'){
+    client.user.setPresence({
+      status: 'dnd',
+    });
+    botStatus = 'dnd';
+  } if(message == 'online'){
+    client.user.setPresence({
+      status: 'online',
+      activities: [{ name: 'with discord.js', type: 'PLAYING' }],
+    });
+    botStatus = 'online';
+  } if(message == 'idle'){
+    client.user.setPresence({
+      status: 'idle',
+    });
+    botStatus = 'idle';
+    const channel = client.channels.cache.get(salon_id);
+    channel.send(`Going AFK!`);
+  } if(message == 'invisible'){
+    client.user.setPresence({
+      status: 'invisible',
+    });
+    botStatus = 'invisible';
   }
 });
 
@@ -72,21 +99,18 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 const channel = client.channels.cache.get(salon_id);
 
 client.on('messageCreate', async (message) => {
-
     if (message.channel.id === salon_id) {
-
         if(message.author.tag != client.user.tag){
-
-
           if(message.mentions.members.first() == client.user.id){
-            const channel = client.channels.cache.get(salon_id);
-            bot.reply(message.author.tag, message.content).then(function(reply) {
-            channel.send(`<@${message.author.id}> : ${reply}`);
-          });
+            // Le bot de répond que s'il n'est ni absent, ni invisible, ni en mode ne pas déranger
+            if(botStatus != 'idle' && botStatus != 'dnd' && botStatus != 'invisible'){
+              const channel = client.channels.cache.get(salon_id);
+              bot.reply(message.author.tag, message.content).then(function(reply) {
+                channel.send(`<@${message.author.id}> : ${reply}`);
+              });
+            }
         }
       }
-        
-
     }
 }) 
 

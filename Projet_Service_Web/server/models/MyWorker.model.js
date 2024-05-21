@@ -71,16 +71,6 @@ class MyWorker{
         this.workersService.writeInWorkerLogFile(this.logFile, 'Bot deleted \n');
     }
 
-    suspend(){
-        this.job.postMessage('suspend');
-        this.status='stopped';
-    }
-
-    continue(){
-        this.job.postMessage('continue');
-        this.status='activated';
-    }
-
     isStatus(status){
         return (status == this.status);
     }
@@ -104,6 +94,15 @@ class MyWorker{
     /**
      * Sets the status of the worker.
      * @param {string} status - The new status to set.
+     * Status about application : 
+     * - installed -> not started, status when the worker is created
+     * - activated -> started
+     * - terminated -> kills the worker
+     * Status about discord bot :
+     * - idle -> bot will say it's afk and won't answer
+     * - online -> bot will answer
+     * - dnd -> bot will say it's busy and won't answer
+     * - invisible -> bot will be invisible and won't answer
      * @param {string} token - The token to use for certain status changes.
      */
     setStatus(status, token){
@@ -112,14 +111,8 @@ class MyWorker{
         // Gestion des status de l'application
         if(status === 'terminated'){
             this.delete();
-        } else if(status === 'activated'){
-            if(this.status === 'stopped'){
-                this.continue();
-            } else if(this.status === 'installed'){
-                this.start(token);
-            }
-        } else if(status === 'stopped'){
-            this.suspend();
+        } else if(status === 'activated' && this.status === 'installed'){
+            this.start(token);
         }
         // Gestion des statuts Discord
         else if(status === 'idle' && this.status == 'activated'){

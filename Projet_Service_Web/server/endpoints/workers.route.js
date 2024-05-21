@@ -7,10 +7,10 @@ const { WorkersService } = require('../use-cases/WorkersService');
  * @swagger
  * /:
  *   get:
- *     summary: Retrieve a list of workers
+ *     summary: Retrieve the list of all workers
  *     responses:
  *       200:
- *         description: A list of workers.
+ *         description: A list of all workers.
  */
 router.get('/', getWorkers);
 function getWorkers(req, res, next) {

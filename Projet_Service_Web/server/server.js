@@ -20,5 +20,6 @@ app.use(WorkersAPIBaseURL, workersRouter);
 
 const port = 8080;
 app.listen(port, () => {
-  console.log(`Server is listening on http://localhost:${port}${WorkersAPIBaseURL}`)
+  console.log(`Server is listening on http://localhost:${port}${WorkersAPIBaseURL}`);
+  console.log(`Swagger documentation is available on http://localhost:${port}/api-docs`)
 })

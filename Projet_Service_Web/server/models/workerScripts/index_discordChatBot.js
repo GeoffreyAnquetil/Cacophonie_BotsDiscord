@@ -25,6 +25,8 @@ parentPort.on('message', (message) => {
       activities: [{ name: 'with discord.js', type: 'PLAYING' }],
     });
     botStatus = 'online';
+    const channel = client.channels.cache.get(salon_id);
+    channel.send(`Busy, coming back later...`);
   } if(message == 'idle'){
     client.user.setPresence({
       status: 'idle',

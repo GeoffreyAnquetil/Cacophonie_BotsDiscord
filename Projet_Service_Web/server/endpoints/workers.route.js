@@ -36,6 +36,7 @@ function getWorkers(req, res, next) {
  *           type: string
  *         required: true
  *         description: The status of the worker
+ *         example: "activated"
  *     responses:
  *       200:
  *         description: A list of workers with the specified status.
@@ -66,6 +67,7 @@ function getWorkersByStatus(req, res, next) {
  *           type: string
  *         required: true
  *         description: The name of the worker
+ *         example: "worker1"
  *     responses:
  *       200:
  *         description: The worker with the specified name.
@@ -94,6 +96,7 @@ function getWorkerByName(req, res, next) {
  *         name: workerName
  *         schema:
  *           type: string
+ *           example: "worker1"
  *         required: true
  *         description: The name of the worker
  *       - in: body
@@ -108,9 +111,11 @@ function getWorkerByName(req, res, next) {
  *             startDate:
  *               type: string
  *               format: date-time
+ *               example: "2024-05-21T14:00:00"
  *             endDate:
  *               type: string
  *               format: date-time
+ *               example: "2024-05-21T16:00:00"
  *     responses:
  *       200:
  *         description: Logs of the worker between the specified dates.
@@ -142,6 +147,7 @@ async function getLogsBetweenDates(req, res, next) {
  *         name: workerName
  *         schema:
  *           type: string
+ *           example: "worker1"
  *         required: true
  *         description: The name of the worker
  *       - in: body
@@ -152,6 +158,7 @@ async function getLogsBetweenDates(req, res, next) {
  *           properties:
  *             status:
  *               type: string
+ *               example: "activated"
  *     responses:
  *       200:
  *         description: The updated worker.
@@ -178,7 +185,7 @@ function patchWorkerByName(req, res, next) {
  *     summary: Delete a worker by name
  *     parameters:
  *       - in: path
- *         name: workerName
+ *         name: workerName 
  *         schema:
  *           type: string
  *         required: true
@@ -216,6 +223,7 @@ function deleteWorkerByName(req, res, next) {
  *           properties:
  *             workerName:
  *               type: string
+ *               example: "worker1"
  *     responses:
  *       201:
  *         description: The created worker.

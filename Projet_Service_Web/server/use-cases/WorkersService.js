@@ -162,6 +162,8 @@ class WorkersService extends Map{
 	
 			const start = moment(new Date(startDate));
 			const end = moment(new Date(endDate));
+
+			console.log(`start : ${start} end : ${end} workerName : ${workerName}`);
 	
 			const logFilePath = path.join(__dirname, '../models/logs/', workerName + '.log');
 	
@@ -187,7 +189,6 @@ class WorkersService extends Map{
 						message: match[2]
 					};
 				});
-	
 				resolve(logsJson);
 			});
 		});

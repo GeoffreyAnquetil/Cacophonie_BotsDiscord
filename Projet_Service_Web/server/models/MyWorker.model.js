@@ -6,6 +6,10 @@ workerScripts['index_discordChatBot'] = './models/workerScripts/index_discordCha
 
 const statusSet = new Set(['installed','activated','idle','terminated']);
 
+const discordStatusSet = new Set(['online','idle','dnd','invisible']);
+
+const fs = require('fs');
+
 class MyWorker{
     constructor({workerName,token,workersService}){
         this.workerName = workerName;
@@ -68,34 +72,82 @@ class MyWorker{
     }
 
     suspend(){
-        this.job.postMessage('suspend')
-        this.status='idle';
+        this.job.postMessage('suspend');
+        this.status='stopped';
     }
 
     continue(){
-        this.job.postMessage('continue')
+        this.job.postMessage('continue');
+        this.status='activated';
     }
 
     isStatus(status){
         return (status == this.status);
     }
 
+    setOnline(){
+        this.job.postMessage('online');
+    }
+
+    setDnd(){
+        this.job.postMessage('dnd');
+    }
+
+    setInvisible(){
+        this.job.postMessage('invisible');
+    }
+
+    setIdle(){
+        this.job.postMessage('idle');
+    }
+
+    /**
+     * Sets the status of the worker.
+     * @param {string} status - The new status to set.
+     * @param {string} token - The token to use for certain status changes.
+     */
     setStatus(status, token){
         console.log(`setStatus to ${status}, current is ${this.status}`);
         this.workersService.writeInWorkerLogFile(this.logFile, `setStatus to ${status}, current is ${this.status} \n`);
+        // Gestion des status de l'application
         if(status === 'terminated'){
             this.delete();
-        } else if(status === 'idle' && this.status === 'activated'){
-            this.suspend();
         } else if(status === 'activated'){
-            if(this.status === 'idle'){
+            if(this.status === 'stopped'){
                 this.continue();
             } else if(this.status === 'installed'){
                 this.start(token);
             }
+        } else if(status === 'stopped'){
+            this.suspend();
+        }
+        // Gestion des statuts Discord
+        else if(status === 'idle' && this.status == 'activated'){
+            this.setIdle();
+        } else if(status === 'dnd' && this.status == 'activated'){
+            this.setDnd();
+        } else if(status === 'online' && this.status == 'activated'){
+            this.setOnline();
+        } else if(status === 'invisible' && this.status == 'activated'){
+            this.setInvisible();
         }
     }
-    
+
+    //const discordStatusSet = new Set(['online','idle','dnd','invisible']);
+    /*
+    setDiscordStatus(status, token){
+        console.log(`setStatus to ${status}, current is ${this.status}`);
+        if(status === online){
+            this.job.postMessage('online');
+        } else if(status === 'idle'){
+            this.job.postMessage('idle');
+        } else if(status === 'dnd'){
+            this.job.postMessage('dnd');
+        } else if(status === 'invisible'){
+            this.job.postMessage('invisible');
+        }
+    }
+    */
 
     getStatus(){
         this.workersService.writeInWorkerLogFile(this.logFile, `Status returned to the client : ${this.status} \n`);

@@ -13,17 +13,6 @@ let botStatus = 'online';
 
 parentPort.on('message', (message) => {
   console.log(`Worker ${workerData.workerName} received message from parent thread: ${message}`);
-  // Gestion du statut du worker
-  if(message == 'suspend'){
-    client.user.setPresence({
-      status: 'idle',
-    });
-  } if(message == 'continue'){
-    client.user.setPresence({
-      status: 'online',
-      activities: [{ name: 'with discord.js', type: 'PLAYING' }],
-    });
-  }
   // Gestions des différents statuts du bot
   if(message == 'dnd'){
     client.user.setPresence({

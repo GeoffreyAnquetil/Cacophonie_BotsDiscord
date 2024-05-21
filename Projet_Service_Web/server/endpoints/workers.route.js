@@ -139,6 +139,57 @@ async function getLogsBetweenDates(req, res, next) {
 
 /**
  * @swagger
+ * /workerName/{workerName}/convs:
+ *   get:
+ *     summary: Retrieve conversations of a worker with users between two dates
+ *     parameters:
+ *       - in: path
+ *         name: workerName
+ *         schema:
+ *           type: string
+ *           example: "worker1"
+ *         required: true
+ *         description: The name of the worker
+ *       - in: body
+ *         name: dateRange
+ *         description: The date range for the logs
+ *         schema:
+ *           type: object
+ *           required:
+ *             - startDate
+ *             - endDate
+ *           properties:
+ *             startDate:
+ *               type: string
+ *               format: date-time
+ *               example: "2024-05-21T14:00:00"
+ *             endDate:
+ *               type: string
+ *               format: date-time
+ *               example: "2024-05-21T16:00:00"
+ *     responses:
+ *       200:
+ *         description: Conversations of the worker with users between the specified dates.
+ */
+router.get('/workerName/:workerName/convs', getConvsBetweenDates);
+async function getConvsBetweenDates(req, res, next) {
+    try {
+      const instance = WorkersService.getInstance();
+      const workerName = req.params.workerName;
+      const { startDate, endDate } = req.body;
+      console.log(`controller tries to get conversations between ${startDate} and ${endDate}`);
+
+      const logs = await instance.getConvsBetweenDates({ workerName, startDate, endDate });
+      res.status(200).json(logs);
+
+    } catch (error) {
+      console.error(`>>> ${error} ${error.stack}`);
+      res.status(404).send(`Resource Not Found`);
+    }
+}
+
+/**
+ * @swagger
  * /workerName/{workerName}:
  *   patch:
  *     summary: Update a worker's status

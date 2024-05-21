@@ -194,6 +194,45 @@ class WorkersService extends Map{
 		});
 	}
 
+	getConvsBetweenDates({workerName, startDate, endDate}) {
+		return new Promise((resolve, reject) => {
+			if (!startDate || !endDate) {
+				return reject(new Error('cannot get logs between dates: startDate or endDate is undefined'));
+			}
+	
+			const start = moment(new Date(startDate));
+			const end = moment(new Date(endDate));
+
+			console.log(`start : ${start} end : ${end} workerName : ${workerName}`);
+	
+			const logFilePath = path.join(__dirname, '../models/conversations/', workerName + '.conv.log');
+	
+			fs.readFile(logFilePath, 'utf8', (err, data) => {
+				if (err) {
+					console.error('Error reading the log file:', err);
+					return reject(err);
+				}
+	
+				const lines = data.split('\n');
+				const filteredLogs = lines.filter(line => {
+					const match = line.match(/^\[([^\]]+)\]/);
+					if (!match) return false;
+					const logDate = moment(new Date(match[1]));
+					return logDate.isBetween(start, end, undefined, '[]');
+				});
+	
+				// Transformer les lignes filtrées en JSON
+				const logsJson = filteredLogs.map(line => {
+					const match = line.match(/^\[([^\]]+)\]\s(.+)/);
+					return {
+						timestamp: match[1],
+						message: match[2]
+					};
+				});
+				resolve(logsJson);
+			});
+		});
+	}
 	
 	
 }

@@ -19,14 +19,22 @@ parentPort.on('message', (message) => {
       status: 'dnd',
     });
     botStatus = 'dnd';
+    const channel = client.channels.cache.get(salon_id);
+    channel.send(`Busy, coming back later...`);
   } if(message == 'online'){
     client.user.setPresence({
       status: 'online',
       activities: [{ name: 'with discord.js', type: 'PLAYING' }],
     });
-    botStatus = 'online';
     const channel = client.channels.cache.get(salon_id);
-    channel.send(`Busy, coming back later...`);
+    if(botStatus == 'dnd'){
+      channel.send(`Can be disturbed now!`);
+    } else if(botStatus == 'idle'){
+      channel.send(`Now CTK (Close To Keyboard)!`);
+    } else if(botStatus == 'invisible'){
+      channel.send(`Visible again!`);
+    }
+    botStatus = 'online';
   } if(message == 'idle'){
     client.user.setPresence({
       status: 'idle',

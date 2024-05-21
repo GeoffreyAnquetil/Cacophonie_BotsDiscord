@@ -105,7 +105,7 @@ class MyWorker{
      * - invisible -> bot will be invisible and won't answer
      * @param {string} token - The token to use for certain status changes.
      */
-    setStatus(status, token){
+    setStatus(status, token){   
         console.log(`setStatus to ${status}, current is ${this.status}`);
         this.workersService.writeInWorkerLogFile(this.logFile, `setStatus to ${status}, current is ${this.status} \n`);
         // Gestion des status de l'application

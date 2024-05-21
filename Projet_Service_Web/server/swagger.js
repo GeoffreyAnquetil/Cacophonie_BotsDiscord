@@ -10,7 +10,7 @@ const options = {
       description: 'API for managing workers',
     },
   },
-  apis: ['./endpoints/workers.route.js'], // Chemin vers vos fichiers de routes
+  apis: ['./endpoints/workers.route.js', './models/MyWorker.model.js'],
 };
 
 const swaggerSpec = swaggerJsDoc(options);

@@ -4,6 +4,8 @@ const { salon_id } = require('../../config.json');
 //const { workerData } = require('worker_threads');
 const RiveScript = require('rivescript')
 
+const fs = require('fs');
+
 var bot = new RiveScript();
 
 // Permet de communiquer avec le thread parent (le thread principal)
@@ -101,11 +103,13 @@ client.on('messageCreate', async (message) => {
     if (message.channel.id === salon_id) {
         if(message.author.tag != client.user.tag){
           if(message.mentions.members.first() == client.user.id){
+            writeInConversationFile(message.content.split('>')[1].replace(' ',''), message.author.tag);
             // Le bot de répond que s'il n'est ni absent, ni invisible, ni en mode ne pas déranger
             if(botStatus != 'idle' && botStatus != 'dnd' && botStatus != 'invisible'){
               const channel = client.channels.cache.get(salon_id);
               bot.reply(message.author.tag, message.content).then(function(reply) {
                 channel.send(`<@${message.author.id}> : ${reply}`);
+                writeInConversationFile(reply, 'Bot');
               });
             }
         }
@@ -124,3 +128,13 @@ console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 
 // Log in to Discord with your client's token
 client.login(workerData.token);
+
+function writeInConversationFile(message, sender) {
+  const file = workerData.convFile;
+  const now = new Date().toString().split('G')[0].slice(0, -1);
+  fs.appendFile(file, '[' + now + '] ' + sender + ' : ' + message + '\n', (err) => {
+    if (err) {
+      console.error(`cannot write in ${file} : ${err}`);
+    }
+  });
+}

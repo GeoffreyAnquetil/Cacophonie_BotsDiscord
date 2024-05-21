@@ -1,6 +1,8 @@
 const MyWorker = require("../models/MyWorker.model.js");
 const { token1, token2, token3 } = require("../config.json");
 
+const fs = require('fs');
+
 class WorkersService extends Map{
 	constructor(){
 		super();
@@ -141,6 +143,15 @@ class WorkersService extends Map{
 		return myWorker.getLogfile();
 	}
 
+	writeInWorkerLogFile(file, message) {
+		const now = new Date().toString().split('G')[0].slice(0, -1);
+		fs.appendFile(file, '[' + now + '] ' + message, (err) => {
+			if (err) {
+				console.error(`cannot write in ${file} : ${err}`);
+			}
+		});
+	}
+	
 }
 
 module.exports = { WorkersService };

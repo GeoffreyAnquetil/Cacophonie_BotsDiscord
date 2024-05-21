@@ -44,7 +44,7 @@ class MyWorker{
         });
     
         worker.on('error', (code) => {
-            this.workersService.writeInWorkerLogFile(this.logFile, `An error occured with corde ${code} \n`);
+            this.workersService.writeInWorkerLogFile(this.logFile, `An error occured with code ${code} \n`);
             throw Error(`Worker ${this.workerName} issued an error with code ${code}`);
         });
     
@@ -61,7 +61,6 @@ class MyWorker{
     kill(){
         if(this.status=='activated' || 'idle'==this.status=='activated'){
             this.job.terminate()
-            this.workersService.writeInWorkerLogFile(this.logFile, 'Bot killed \n');
         }
     }
 

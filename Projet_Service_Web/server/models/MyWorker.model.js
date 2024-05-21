@@ -10,6 +10,52 @@ const discordStatusSet = new Set(['online','idle','dnd','invisible']);
 
 const fs = require('fs');
 
+/** 
+ * @swagger
+ * components:
+ *   schemas:
+ *     MyWorker:
+ *       type: object
+ *       required:
+ *         - workerName
+ *         - token
+ *         - workersService
+ *       properties:
+ *         workerName:
+ *           type: string
+ *           description: The name of the worker given by the user
+ *         token:
+ *           type: string
+ *           description: Id of the worker
+ *         scriptFile:
+ *          type: string
+ *          description: Path to the script file
+ *         workersService:
+ *          type: string
+ *          description: The service managing the workers
+ *         job:
+ *           type: string
+ *           description: The worker thread
+ *         status:
+ *           type: string
+ *           description: The status of the worker
+ *         logFile:
+ *           type: string
+ *           description: The path to the log file
+ *         convFile:
+ *           type: string
+ *           description: The path to the conversation file
+ *      example:
+ *        workerName: DiscordBot
+ *        token: 123456789
+ *        workersService: Instance of WorkersService
+ *        job: Worker thread
+ *        status: activated
+ *        logFile: ./models/logs/DiscordBot.log
+ *        convFile: ./models/conversations/DiscordBot.conv.log
+ * 
+ */
+
 class MyWorker{
     constructor({workerName,token,workersService}){
         this.workerName = workerName;

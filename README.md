@@ -97,15 +97,18 @@ body de la requête :
     "status" : "activated"
 }
 ````
+En "activated", le bot répond normalement aux messages de l'utilisateur.
 ````json
 {
     "status" : "idle"
 }
 ````
+En "idle", le bot est absent et ne répond pas aux messages.
 ````json
 {
     "status" : "dnd"
 }
 ````
+En "do not disturb", le bot indique qu'il n'est pas disponible quand il est taggé dans le chat.
 
 

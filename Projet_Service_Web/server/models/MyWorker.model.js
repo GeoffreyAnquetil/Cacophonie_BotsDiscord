@@ -43,6 +43,7 @@ class MyWorker {
         this.status = 'installed';
         this.workersService.set(this.workerName, this);
         this.logFile = "./models/logs/" + workerName + ".log";
+        this.convFile = "./models/conversations/" + workerName + ".conv.log";
 
         this.workersService.writeInWorkerLogFile(this.logFile, `Bot instantiated \n`);
     }
@@ -55,6 +56,7 @@ class MyWorker {
         const worker = new Worker(this.scriptFile, {
             workerData: {
                 workerName: this.workerName,
+                convFile: this.convFile,
                 token: token
             }
         });

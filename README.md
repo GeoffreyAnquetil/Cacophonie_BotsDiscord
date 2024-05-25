@@ -1,5 +1,10 @@
 # Requêtes HTTP pour intéragir avec l'API
 
+En cas de problème, la vidéo de démonstration est disponible sur YouTube : 
+````url
+https://youtu.be/pu-sMH0hjmI
+````
+
 ## Création de bot
 Requête POST à l'URL
 ````url
